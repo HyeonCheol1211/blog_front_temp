@@ -10,7 +10,7 @@
  * 업로드 요청 파트명은 profileImage (응답 필드명 profileImageUrl과 다름)
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://3.37.123.247:8080'
 
 /** 서버 기본 프로필 이미지 경로 */
 export const FALLBACK_PROFILE_IMAGE = `${API_BASE_URL}/images/profiles/basic_profile_image.png`
