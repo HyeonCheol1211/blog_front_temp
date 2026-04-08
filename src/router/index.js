@@ -16,6 +16,24 @@ const router = createRouter({
       meta: { title: '글 보기' },
     },
     {
+      path: '/users/:userId',
+      name: 'user-profile',
+      component: () => import('@/views/UserProfileView.vue'),
+      meta: { title: '프로필' },
+    },
+    {
+      path: '/profile/edit',
+      name: 'profile-edit',
+      component: () => import('@/views/ProfileEditView.vue'),
+      meta: { title: '프로필 수정', requiresAuth: true },
+    },
+    {
+      path: '/users/:userId/posts',
+      name: 'user-posts',
+      component: () => import('@/views/MyPostsView.vue'),
+      meta: { title: '작성 글' },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue'),

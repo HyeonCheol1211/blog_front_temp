@@ -9,10 +9,17 @@
         v-for="c in comments"
         :key="c.commentId"
         class="card comment-card"
-        @click="goToPost(c.postId ?? c.post?.id)"
       >
         <div class="comment-meta">
-          <span class="comment-author">{{ c.author }}</span>
+          <div class="author-info" @click.stop="goToProfile(c.authorId || c.author)" style="cursor: pointer;" title="프로필 보기">
+            <div class="avatar-sm">
+              <img
+                :src="resolveProfileImageUrl(c.profileImageUrl)"
+                alt="프로필 이미지"
+              />
+            </div>
+            <span class="comment-author">{{ c.author }}</span>
+          </div>
           <span v-if="c.postTitle" class="comment-post">글: {{ c.postTitle }}</span>
         </div>
         <p class="comment-content">{{ c.content }}</p>
@@ -25,19 +32,22 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMyComments } from '@/api/comments.js'
+import { resolveProfileImageUrl } from '@/utils/image.js'
 
 const router = useRouter()
 const comments = ref([])
 const loading = ref(true)
 const error = ref('')
 
-function goToPost(postId) {
-  if (postId) router.push({ name: 'post-detail', params: { id: String(postId) } })
+// postId는 댓글 응답에서 제거됨. postTitle만 있으면 표시
+function goToProfile(userId) {
+  if (userId) router.push({ name: 'user-profile', params: { userId: String(userId) } })
 }
 
 onMounted(async () => {
   try {
     const data = await getMyComments()
+    // 응답 스펜: commentId, profileImageUrl, author, authorId, content
     comments.value = Array.isArray(data) ? data : data.content ?? data ?? []
   } catch (e) {
     error.value = e.response?.data?.message || '목록을 불러오지 못했습니다.'
@@ -67,6 +77,30 @@ onMounted(async () => {
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   color: var(--text-muted);
+}
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.avatar-sm {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar-sm img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .comment-author {
   color: var(--text);
