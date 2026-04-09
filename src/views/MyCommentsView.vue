@@ -9,9 +9,10 @@
         v-for="c in comments"
         :key="c.commentId"
         class="card comment-card"
+        @click="goToPost(c.postId)"
       >
         <div class="comment-meta">
-          <div class="author-info" @click.stop="goToProfile(c.authorId || c.author)" style="cursor: pointer;" title="프로필 보기">
+          <div class="author-info" @click.stop="goToProfile(c.authorId)" style="cursor: pointer;" title="프로필 보기">
             <div class="avatar-sm">
               <img
                 :src="resolveProfileImageUrl(c.profileImageUrl)"
@@ -33,15 +34,23 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getMyComments } from '@/api/comments.js'
 import { resolveProfileImageUrl } from '@/utils/image.js'
+import { useAuth } from '@/composables/useAuth.js'
 
 const router = useRouter()
+const { user } = useAuth()
 const comments = ref([])
 const loading = ref(true)
 const error = ref('')
 
-// postId는 댓글 응답에서 제거됨. postTitle만 있으면 표시
-function goToProfile(userId) {
+// 내 댓글 화면이므로 authorId가 없을 경우 로그인 유저의 userId를 사용
+function goToProfile(authorId) {
+  const userId = authorId ?? user.value?.userId
   if (userId) router.push({ name: 'user-profile', params: { userId: String(userId) } })
+}
+
+// 댓글이 작성된 글 보기 페이지로 이동
+function goToPost(postId) {
+  if (postId) router.push({ name: 'post-detail', params: { id: String(postId) } })
 }
 
 onMounted(async () => {
