@@ -38,7 +38,7 @@
             :class="{ active: sortMode === POST_SORT_TYPE.LATEST }"
             @click="setSortMode(POST_SORT_TYPE.LATEST)"
           >
-            🕐 기본순
+            🕐 최신순
           </button>
           <button
             class="sort-btn"
